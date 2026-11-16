@@ -1,5 +1,6 @@
 
 import './App.css';
+import { Search, ShoppingCart, LogIn } from 'lucide-react';
 
 
 import NFTCard from './components/NFTCard';
@@ -70,19 +71,32 @@ function App() {
           <a href="#aprenda">Aprenda</a>
         </nav>
 
+
         <div className="header-actions">
-          <button className="search-button" aria-label="Pesquisar">
-            ⌕
+          <button
+            className="search-button"
+            aria-label="Pesquisar"
+            type="button"
+          >
+            <Search size={22} strokeWidth={1.8} />
           </button>
 
-          <button className="cart-button" aria-label="Carrinho">
-            🛒
+          <button
+            className="cart-button"
+            aria-label="Carrinho com 6 itens"
+            type="button"
+          >
+            <ShoppingCart size={23} strokeWidth={1.8} />
+
+            <span className="cart-count">6</span>
           </button>
 
-          <button className="login-button">
-            Entrar
+          <button className="login-button" type="button">
+            <LogIn size={19} strokeWidth={1.8} />
+            <span>Entrar</span>
           </button>
         </div>
+
       </header>
 
       <main id="inicio">

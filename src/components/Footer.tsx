@@ -4,7 +4,7 @@ function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
-  function handleSubscribe(event) {
+  function handleSubscribe(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!email.trim()) return;

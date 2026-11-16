@@ -1005,3 +1005,66 @@
     padding: 0;
   }
 }
+
+/* HEADER - ICONES DO FIGMA */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.search-button,
+.cart-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #f1e5d5;
+  padding: 0;
+  position: relative;
+}
+
+.search-button:hover,
+.cart-button:hover {
+  color: #d9914b;
+}
+
+/* INDICADOR DO CARRINHO */
+
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -9px;
+  width: 17px;
+  height: 17px;
+  background: #d9914b;
+  color: #120b08;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* BOTAO ENTRAR */
+
+.login-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: #d9914b;
+  color: #120b08;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 13px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.login-button:hover {
+  background: #e9a45f;
+}
