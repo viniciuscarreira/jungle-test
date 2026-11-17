@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useCart } from '../state/CartContext';
+import { useAuth } from '../state/AuthContext';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import NFTCard from '../components/NFTCard';
 import Footer from '../components/Footer';
@@ -19,6 +20,7 @@ const formatETH = (value: number) => `${value.toFixed(2)} ETH`;
 
 export default function Cart() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { items, subtotal, discount, networkFee, total, updateQuantity, removeItem, applyCoupon } = useCart();
   const [coupon, setCoupon] = useState('');
   const [couponMessage, setCouponMessage] = useState('');
@@ -133,7 +135,15 @@ export default function Cart() {
             <button
               className="cart-checkout"
               disabled={items.length === 0}
-              onClick={() => navigate({ to: "/pagamento" })}
+              onClick={() => {
+                if (!user) {
+                  sessionStorage.setItem('kurio-login-required', '1');
+                  sessionStorage.setItem('kurio-post-login-destination', '/carrinho');
+                  void navigate({ to: '/' });
+                } else {
+                  void navigate({ to: '/pagamento' });
+                }
+              }}
             >
               Conectar e finalizar
             </button>

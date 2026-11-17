@@ -55,7 +55,7 @@ const menuItems = [
 
 export default function Wallets() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const [form, setForm] = useState<WalletForm>(() => {
     try {
       const saved = localStorage.getItem('kurio-wallets-demo');

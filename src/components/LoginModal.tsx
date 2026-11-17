@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Eye, EyeOff, X } from 'lucide-react';
 import './LoginModal.css';
 import { useAuth } from '../state/AuthContext';
+import { useNavigate } from '@tanstack/react-router';
 
 type LoginModalProps = {
   onClose: () => void;
@@ -10,6 +11,7 @@ type LoginModalProps = {
 
 export default function LoginModal({ onClose }: LoginModalProps) {
   const { register, login } = useAuth();
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [username, setUsername] = useState('');
@@ -38,6 +40,9 @@ export default function LoginModal({ onClose }: LoginModalProps) {
       if (isRegister) await register(username, email, password);
       else await login(email, password);
       onClose();
+      const destination = sessionStorage.getItem('kurio-post-login-destination');
+      sessionStorage.removeItem('kurio-post-login-destination');
+      if (destination === '/carrinho') void navigate({ to: '/carrinho' });
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Não foi possível continuar.');
     } finally {

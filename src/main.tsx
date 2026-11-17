@@ -38,6 +38,8 @@ function PrivatePage({ children }: { children: ReactNode }) {
 }
 const ProtectedProfile = () => <PrivatePage><CollectorProfile /></PrivatePage>;
 const ProtectedWallets = () => <PrivatePage><Wallets /></PrivatePage>;
+const ProtectedPayment = () => <PrivatePage><Payment /></PrivatePage>;
+const ProtectedConfirmation = () => <PrivatePage><OrderConfirmation /></PrivatePage>;
 
 const rootRoute = createRootRoute();
 
@@ -62,13 +64,13 @@ const cartRoute = createRoute({
 const paymentRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/pagamento',
-  component: Payment,
+  component: ProtectedPayment,
 });
 
 const confirmationRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/confirmacao',
-  component: OrderConfirmation,
+  component: ProtectedConfirmation,
 });
 
 const profileRoute = createRoute({

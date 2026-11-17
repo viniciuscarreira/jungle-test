@@ -1,16 +1,18 @@
 
 import { useNavigate } from '@tanstack/react-router';
 import { useCart } from '../state/CartContext';
+import { useAuth } from '../state/AuthContext';
 import { Check, X } from 'lucide-react';
 import './OrderConfirmation.css';
 
 export default function OrderConfirmation() {
   const navigate = useNavigate();
   const { order } = useCart();
+  const { user } = useAuth();
   const purchasedNFTs = order?.items ?? [];
 
 
-  if (!order) return <div className="confirmation-closed"><p>Nenhum pedido simulado encontrado.</p><button onClick={() => navigate({ to: "/carrinho" })}>Voltar ao carrinho</button></div>;
+  if (!order || !user || order.ownerEmail !== user.email) return <div className="confirmation-closed"><p>Nenhum pedido simulado encontrado.</p><button onClick={() => navigate({ to: "/carrinho" })}>Voltar ao carrinho</button></div>;
 
   return (
     <div className="confirmation-page">

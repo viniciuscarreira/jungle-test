@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useCart } from '../state/CartContext';
+import { useAuth } from '../state/AuthContext';
 import Footer from '../components/Footer';
 import './Payment.css';
 
@@ -33,6 +34,7 @@ const initialForm: PaymentForm = {
 
 export default function Payment() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { items: paymentItems, subtotal, discount, networkFee, total, checkout } = useCart();
   const [form, setForm] = useState<PaymentForm>(initialForm);
   const [useAnotherWallet, setUseAnotherWallet] = useState(false);
@@ -45,7 +47,13 @@ export default function Payment() {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const order = checkout(selectedProvider);
+    if (!user) {
+      sessionStorage.setItem('kurio-login-required', '1');
+      sessionStorage.setItem('kurio-post-login-destination', '/carrinho');
+      void navigate({ to: '/' });
+      return;
+    }
+    const order = checkout(selectedProvider, user.email);
     if (order) navigate({ to: "/confirmacao" });
     else setSubmitted(true);
   }
