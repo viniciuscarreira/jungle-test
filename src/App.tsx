@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 
 import NFTDetails from './pages/NFTDetails';
 import Cart from './pages/Cart';
+import Payment from './pages/Payment';
 
 const nfts = [
   { id: 1, name: 'Emerald Ape #042', price: '1.19', image: '/images/monkey-green.png' },
@@ -60,8 +61,13 @@ const articles = [
 
 
 function App() {
-  const mostrarCarrinho = true;
+  const mostrarPagamento = true;
+  const mostrarCarrinho = false;
   const mostrarDetalhes = false;
+
+  if (mostrarPagamento) {
+    return <Payment />;
+  }
 
   if (mostrarCarrinho) {
     return <Cart />;

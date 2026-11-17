@@ -1,0 +1,224 @@
+
+.payment-page {
+  min-height: 100vh;
+  background: #130c09;
+  color: #f5e6d6;
+}
+
+.payment-container {
+  width: min(1180px, 92%);
+  margin: 0 auto;
+}
+
+.payment-breadcrumb {
+  padding: 26px 0 16px;
+  color: #e5c4a8;
+  font-size: 12px;
+}
+
+.payment-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(300px, 1fr);
+  gap: 85px;
+  align-items: start;
+  margin-bottom: 120px;
+}
+
+.payment-profile h2,
+.payment-summary h2 {
+  font-size: 16px;
+  margin: 0 0 20px;
+}
+
+.payment-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 18px;
+}
+
+.payment-fields label,
+.payment-description {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.payment-fields input,
+.payment-fields select,
+.payment-description textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  color: #f5e6d6;
+  background: #1b100c;
+  border: 1px solid #39241a;
+  border-radius: 2px;
+  outline: none;
+  font: inherit;
+}
+
+.payment-fields input:focus,
+.payment-fields select:focus,
+.payment-description textarea:focus {
+  border-color: #e99b54;
+}
+
+.payment-fields select option {
+  background: #1b100c;
+}
+
+.payment-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 24px 0 18px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.payment-checkbox input {
+  accent-color: #e99b54;
+}
+
+.payment-description textarea {
+  max-width: 370px;
+  resize: vertical;
+}
+
+.payment-summary-head {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #754025;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+
+.payment-nft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px;
+  margin-bottom: 6px;
+  background: #24160f;
+  font-size: 11px;
+}
+
+.payment-nft img {
+  width: 55px;
+  height: 55px;
+  object-fit: cover;
+}
+
+.payment-nft div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+
+.payment-nft small {
+  font-size: 9px;
+  color: #bda28e;
+}
+
+.payment-nft > span {
+  color: #e99b54;
+  white-space: nowrap;
+}
+
+.payment-coupon-note {
+  text-align: right;
+  color: #bda28e;
+  font-size: 11px;
+  margin: 12px 0;
+}
+
+.payment-summary-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  margin: 11px 0;
+}
+
+.payment-total {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #754025;
+  padding-top: 17px;
+  margin-top: 18px;
+  font-size: 15px;
+}
+
+.payment-total strong:last-child {
+  color: #e99b54;
+}
+
+.payment-summary h3 {
+  font-size: 14px;
+  margin: 24px 0 13px;
+}
+
+.payment-wallet-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.payment-wallet-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #754025;
+  padding: 12px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.payment-wallet-option.selected {
+  border-color: #e99b54;
+  color: #e99b54;
+}
+
+.payment-wallet-option input {
+  accent-color: #e99b54;
+}
+
+.payment-submit {
+  width: 100%;
+  margin-top: 15px;
+  padding: 13px;
+  background: #e99b54;
+  color: #211209;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.payment-success {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #e99b54;
+  margin-top: 15px;
+}
+
+@media (max-width: 900px) {
+  .payment-layout {
+    grid-template-columns: 1fr;
+    gap: 45px;
+  }
+}
+
+@media (max-width: 600px) {
+  .payment-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-description textarea {
+    max-width: 100%;
+  }
+}
