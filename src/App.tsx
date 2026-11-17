@@ -16,6 +16,7 @@ import { useState } from 'react';
 import LoginModal from './components/LoginModal';
 
 import CollectorProfile from './pages/CollectorProfile';
+import Wallets from './pages/Wallets';
 
 
 const nfts = [
@@ -70,12 +71,14 @@ const articles = [
 function App() {
   const [loginOpen, setLoginOpen] = useState(false);
 
-  const mostrarPerfil = true;
+  const mostrarCarteiras = true;
+  const mostrarPerfil = false;
   const mostrarConfirmacao = false;
   const mostrarPagamento = false;
   const mostrarCarrinho = false;
   const mostrarDetalhes = false;
 
+  if (mostrarCarteiras) return <Wallets />;
   if (mostrarPerfil) return <CollectorProfile />;
   if (mostrarConfirmacao) return <OrderConfirmation />;
   if (mostrarPagamento) return <Payment />;
