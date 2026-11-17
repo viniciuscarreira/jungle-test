@@ -1,5 +1,7 @@
+import { useNavigate } from '@tanstack/react-router';
 
 interface NFTCardProps {
+  id?: number;
   name: string;
   price: string;
   image: string;
@@ -7,13 +9,26 @@ interface NFTCardProps {
 }
 
 function NFTCard({
+  id,
   name,
   price,
   image,
   oldPrice
 }: NFTCardProps) {
+  const navigate = useNavigate();
   return (
-    <article className="nft-card">
+    <article
+      className="nft-card"
+      role="link"
+      tabIndex={0}
+      onClick={() => navigate({ to: '/nft/$id', params: { id: String(id ?? 1) } })}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter') {
+          navigate({ to: '/nft/$id', params: { id: String(id ?? 1) } });
+        }
+      }}
+      style={{ cursor: 'pointer' }}
+    >
       <img
         src={image}
         alt={name}

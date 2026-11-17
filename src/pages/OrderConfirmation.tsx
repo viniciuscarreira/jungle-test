@@ -1,47 +1,16 @@
 
-import { useState } from 'react';
-import { Check, ExternalLink, X } from 'lucide-react';
+import { useNavigate } from '@tanstack/react-router';
+import { useCart } from '../state/CartContext';
+import { Check, X } from 'lucide-react';
 import './OrderConfirmation.css';
 
-const purchasedNFTs = [
-  {
-    id: 1,
-    name: 'Emerald Ape #042',
-    token: '#042',
-    quantity: 2,
-    subtotal: 2.38,
-    image: '/images/monkey-green.png',
-  },
-  {
-    id: 2,
-    name: 'Violet Nomad #314',
-    token: '#314',
-    quantity: 6,
-    subtotal: 8.34,
-    image: '/images/monkey-purple.png',
-  },
-  {
-    id: 3,
-    name: 'Ivory Baron #088',
-    token: '#088',
-    quantity: 9,
-    subtotal: 16.11,
-    image: '/images/monkey-gold.png',
-  },
-];
-
 export default function OrderConfirmation() {
-  const [isOpen, setIsOpen] = useState(true);
+  const navigate = useNavigate();
+  const { order } = useCart();
+  const purchasedNFTs = order?.items ?? [];
 
-  if (!isOpen) {
-    return (
-      <div className="confirmation-closed">
-        <button onClick={() => setIsOpen(true)}>
-          Ver confirmação do pedido
-        </button>
-      </div>
-    );
-  }
+
+  if (!order) return <div className="confirmation-closed"><p>Nenhum pedido simulado encontrado.</p><button onClick={() => navigate({ to: "/carrinho" })}>Voltar ao carrinho</button></div>;
 
   return (
     <div className="confirmation-page">
@@ -49,7 +18,7 @@ export default function OrderConfirmation() {
         <button
           className="confirmation-close"
           aria-label="Fechar confirmação"
-          onClick={() => setIsOpen(false)}
+          onClick={() => navigate({ to: "/" })}
         >
           <X size={18} />
         </button>
@@ -60,24 +29,24 @@ export default function OrderConfirmation() {
           </div>
         </div>
 
-        <h1>Seus NFTs agora estão na sua carteira</h1>
+        <h1>Pedido simulado realizado com sucesso</h1>
 
         <div className="confirmation-transaction">
           <div>
-            <span>ID da transação</span>
-            <strong>0x7f13...2b9c</strong>
+            <span>ID do pedido</span>
+            <strong>{order.id}</strong>
           </div>
           <div>
             <span>Data</span>
-            <strong>20 jul, 2026</strong>
+            <strong>{new Date(order.date).toLocaleDateString("pt-BR")}</strong>
           </div>
           <div>
             <span>Total</span>
-            <strong>26.846 ETH</strong>
+            <strong>{order.total.toFixed(3)} ETH</strong>
           </div>
           <div>
             <span>Carteira</span>
-            <strong>MetaMask</strong>
+            <strong>{order.provider}</strong>
           </div>
         </div>
 
@@ -100,36 +69,29 @@ export default function OrderConfirmation() {
                 </div>
               </div>
               <span>({nft.quantity}x)</span>
-              <strong>{nft.subtotal.toFixed(2)} ETH</strong>
+              <strong>{(nft.price * nft.quantity).toFixed(2)} ETH</strong>
             </div>
           ))}
 
           <div className="confirmation-fees">
             <div>
               <span>Taxa de rede</span>
-              <span>0.016 ETH</span>
+              <span>{order.networkFee.toFixed(3)} ETH</span>
             </div>
             <div>
               <strong>Total</strong>
-              <strong>26.846 ETH</strong>
+              <strong>{order.total.toFixed(3)} ETH</strong>
             </div>
           </div>
         </section>
 
         <p className="confirmation-message">
-          Transação confirmada na Ethereum. A propriedade foi
-          transferida para sua carteira conectada e registrada na rede.
+          Este é um pedido demonstrativo. Nenhuma transferência de NFT ou transação blockchain foi realizada.
         </p>
 
-        <button
-          className="confirmation-etherscan"
-          type="button"
-          onClick={() => {
-            // Integraremos o link real após implementar o checkout.
-          }}
-        >
-          Ver no Etherscan <ExternalLink size={14} />
-        </button>
+        <div className="confirmation-actions">
+          <button className="confirmation-etherscan" type="button" onClick={() => navigate({to:"/"})}>Voltar ao início</button>
+        </div>
       </div>
     </div>
   );

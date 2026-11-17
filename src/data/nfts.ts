@@ -1,0 +1,9 @@
+export type NFT = { id: number; name: string; price: string; image: string; oldPrice?: string; category: string; network: string; creator: string; created: number; popularity: number };
+const names = ['Emerald Ape #042','Sage Nomad #009','Neon Vessel #552','Cosmic Bloom #118','Violet Nomad #314','Ivory Baron #088','Golden Beat #207','Golden Signal #160','Golden Echo #231','Azure Sage #144','Moonlight Ape #221','Golden Orbit #309','Forest Nomad #411','Solar Bloom #052','Violet Echo #177','Ivory Muse #302','Neon Baron #555','Cosmic Signal #606','Sage Dream #710','Golden Nova #818','Emerald Light #923','Violet Moon #027','Ivory Star #637','Golden Bloom #777','Cosmic Baron #128','Forest Beat #845','Neon Sage #009','Moonlight Nomad #112','Solar Ape #515','Golden Muse #999','Violet Star #088','Emerald Echo #321','Cosmic Orbit #202','Ivory Dream #404','Golden Light #605','Sage Signal #716'];
+const prices = [1.19,1.69,1.99,1.29,1.39,1.79,.99,.39,.59,.89,2.15,1.35,.72,1.51,.48,2.29,1.07,.64,1.89,.95,1.15,1.43,2.09,.79,1.27,1.67,.57,1.97,.83,1.22,1.54,.42,1.06,2.41,.69,1.34];
+const images = ['/images/monkey-green.png','/images/monkey-purple.png','/images/monkey-gold.png'];
+const categories = ['Arte digital','Fotografia','Música','Arte 3D','Colecionáveis','Generativa','Jogos','Assinaturas','Utilidade'];
+const networks = ['Ethereum','Polygon','Solana'];
+const creators = ['Studio Genesis','Ateliê Nomad','Kurio Collective','Digital Bloom','Golden Labs'];
+export const nfts: NFT[] = names.map((name,index)=>({ id:index+1, name, price:prices[index].toFixed(2), image:images[index%3], category:categories[index%9], network:networks[index%3], creator:creators[index%5], created:names.length-index, popularity:(index*17+53)%100 }));
+export function getNFT(id: string | number) { const numeric = Number(id); return nfts.find(n=>n.id===numeric || Number(n.name.match(/#(\d+)/)?.[1])===numeric); }

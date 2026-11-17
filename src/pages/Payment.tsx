@@ -1,5 +1,7 @@
 
 import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { useCart } from '../state/CartContext';
 import Footer from '../components/Footer';
 import './Payment.css';
 
@@ -29,34 +31,9 @@ const initialForm: PaymentForm = {
   description: '',
 };
 
-const paymentItems = [
-  {
-    id: 1,
-    name: 'Emerald Ape #042',
-    token: '#042',
-    quantity: 2,
-    subtotal: 2.38,
-    image: '/images/monkey-green.png',
-  },
-  {
-    id: 2,
-    name: 'Violet Nomad #314',
-    token: '#314',
-    quantity: 6,
-    subtotal: 8.34,
-    image: '/images/monkey-purple.png',
-  },
-  {
-    id: 3,
-    name: 'Ivory Baron #088',
-    token: '#088',
-    quantity: 9,
-    subtotal: 16.11,
-    image: '/images/monkey-gold.png',
-  },
-];
-
 export default function Payment() {
+  const navigate = useNavigate();
+  const { items: paymentItems, subtotal, discount, networkFee, total, checkout } = useCart();
   const [form, setForm] = useState<PaymentForm>(initialForm);
   const [useAnotherWallet, setUseAnotherWallet] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState('coinbase');
@@ -68,7 +45,9 @@ export default function Payment() {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+    const order = checkout(selectedProvider);
+    if (order) navigate({ to: "/confirmacao" });
+    else setSubmitted(true);
   }
 
   return (
@@ -195,6 +174,7 @@ export default function Payment() {
 
           <aside className="payment-summary">
             <h2>Seus NFTs</h2>
+            {paymentItems.length === 0 && <p>Seu carrinho está vazio. Adicione NFTs antes de finalizar.</p>}
 
             <div className="payment-summary-head">
               <span>NFTs</span>
@@ -208,7 +188,7 @@ export default function Payment() {
                   <strong>{item.name}</strong>
                   <small>ID do token: {item.token} ({item.quantity}x)</small>
                 </div>
-                <span>{item.subtotal.toFixed(2)} ETH</span>
+                <span>{(item.price * item.quantity).toFixed(2)} ETH</span>
               </div>
             ))}
 
@@ -218,20 +198,20 @@ export default function Payment() {
 
             <div className="payment-summary-line">
               <span>Subtotal</span>
-              <span>26.83 ETH</span>
+              <span>{subtotal.toFixed(2)} ETH</span>
             </div>
             <div className="payment-summary-line">
               <span>Desconto de lançamento</span>
-              <span>(-) 0.00 ETH</span>
+              <span>(-) {discount.toFixed(2)} ETH</span>
             </div>
             <div className="payment-summary-line">
               <span>Taxa de rede</span>
-              <span>0.016 ETH</span>
+              <span>{networkFee.toFixed(3)} ETH</span>
             </div>
 
             <div className="payment-total">
               <strong>Total</strong>
-              <strong>26.846 ETH</strong>
+              <strong>{total.toFixed(3)} ETH</strong>
             </div>
 
             <h3>Carteira e rede</h3>
@@ -260,7 +240,7 @@ export default function Payment() {
               ))}
             </div>
 
-            <button type="submit" className="payment-submit">
+            <button type="submit" className="payment-submit" disabled={paymentItems.length === 0}>
               Confirmar compra
             </button>
 

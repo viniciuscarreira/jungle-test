@@ -219,3 +219,5 @@
     gap: 5px;
   }
 }
+
+.confirmation-actions { display: flex; justify-content: center; gap: 16px; margin-top: 18px; flex-wrap: wrap; }

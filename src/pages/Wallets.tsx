@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import {
   UserRound,
   Wallet,
@@ -52,7 +53,13 @@ const menuItems = [
 ];
 
 export default function Wallets() {
-  const [form, setForm] = useState<WalletForm>(emptyForm);
+  const navigate = useNavigate();
+  const [form, setForm] = useState<WalletForm>(() => {
+    try {
+      const saved = localStorage.getItem('kurio-wallets-demo');
+      return saved ? { ...emptyForm, ...JSON.parse(saved) } : emptyForm;
+    } catch { return emptyForm; }
+  });
   const [sameAsPrimary, setSameAsPrimary] = useState(false);
   const [showSecondary, setShowSecondary] = useState(false);
   const [message, setMessage] = useState('');
@@ -63,7 +70,8 @@ export default function Wallets() {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setMessage('Dados validados! O salvamento será integrado depois.');
+    localStorage.setItem('kurio-wallets-demo', JSON.stringify(form));
+    setMessage('Dados da carteira demonstrativa salvos neste navegador. Nenhuma carteira real foi conectada.');
   }
 
   return (
@@ -79,9 +87,9 @@ export default function Wallets() {
                 key={label}
                 className={`wallets-menu-item ${index === 1 ? 'active' : ''}`}
                 onClick={() => {
-                  if (index !== 1) {
-                    setMessage(`A seção "${label}" será conectada depois.`);
-                  }
+                  if (label === 'Dados do perfil') navigate({ to: '/perfil' });
+                  else if (label === 'Sair') navigate({ to: '/' });
+                  else if (index !== 1) setMessage(`A seção "${label}" será conectada depois.`);
                 }}
               >
                 <Icon size={17} strokeWidth={1.6} />

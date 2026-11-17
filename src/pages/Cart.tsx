@@ -1,45 +1,11 @@
 
 import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { useCart } from '../state/CartContext';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import NFTCard from '../components/NFTCard';
 import Footer from '../components/Footer';
 import './Cart.css';
-
-type CartItem = {
-  id: number;
-  name: string;
-  token: string;
-  price: number;
-  quantity: number;
-  image: string;
-};
-
-const initialItems: CartItem[] = [
-  {
-    id: 1,
-    name: 'Emerald Ape #042',
-    token: '#042',
-    price: 1.19,
-    quantity: 2,
-    image: '/images/monkey-green.png',
-  },
-  {
-    id: 2,
-    name: 'Violet Nomad #314',
-    token: '#314',
-    price: 1.39,
-    quantity: 6,
-    image: '/images/monkey-purple.png',
-  },
-  {
-    id: 3,
-    name: 'Ivory Baron #088',
-    token: '#088',
-    price: 1.79,
-    quantity: 9,
-    image: '/images/monkey-gold.png',
-  },
-];
 
 const relatedNFTs = [
   { id: 1, name: 'Cosmic Bloom #118', price: '1.29', image: '/images/monkey-purple.png' },
@@ -52,43 +18,11 @@ const relatedNFTs = [
 const formatETH = (value: number) => `${value.toFixed(2)} ETH`;
 
 export default function Cart() {
-  const [items, setItems] = useState<CartItem[]>(initialItems);
+  const navigate = useNavigate();
+  const { items, subtotal, discount, networkFee, total, updateQuantity, removeItem, applyCoupon } = useCart();
   const [coupon, setCoupon] = useState('');
-  const [couponApplied, setCouponApplied] = useState(false);
   const [couponMessage, setCouponMessage] = useState('');
-
-  const subtotal = items.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
-
-  const discount = couponApplied ? subtotal * 0.1 : 0;
-  const networkFee = items.length > 0 ? 0.016 : 0;
-  const total = Math.max(0, subtotal - discount + networkFee);
-
-  function updateQuantity(id: number, amount: number) {
-    setItems((current) =>
-      current.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + amount) }
-          : item
-      )
-    );
-  }
-
-  function removeItem(id: number) {
-    setItems((current) => current.filter((item) => item.id !== id));
-  }
-
-  function applyCoupon() {
-    if (coupon.trim().toUpperCase() === 'KURIO10') {
-      setCouponApplied(true);
-      setCouponMessage('Cupom aplicado: 10% de desconto!');
-    } else {
-      setCouponApplied(false);
-      setCouponMessage('Cupom inválido. Experimente KURIO10.');
-    }
-  }
+  function handleCoupon() { setCouponMessage(applyCoupon(coupon) ? 'Cupom aplicado: 10% de desconto!' : 'Cupom inválido. Experimente KURIO10.'); }
 
   return (
     <div className="cart-page">
@@ -168,7 +102,7 @@ export default function Cart() {
                 onChange={(event) => setCoupon(event.target.value)}
                 placeholder="Digite o código promocional..."
               />
-              <button onClick={applyCoupon}>Aplicar</button>
+              <button onClick={handleCoupon}>Aplicar</button>
             </div>
 
             {couponMessage && (
@@ -199,6 +133,7 @@ export default function Cart() {
             <button
               className="cart-checkout"
               disabled={items.length === 0}
+              onClick={() => navigate({ to: "/pagamento" })}
             >
               Conectar e finalizar
             </button>

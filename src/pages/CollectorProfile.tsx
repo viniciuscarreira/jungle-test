@@ -1,5 +1,6 @@
 
 import { useRef, useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import {
   UserRound,
   Wallet,
@@ -51,7 +52,13 @@ const menuItems = [
 ];
 
 export default function CollectorProfile() {
-  const [form, setForm] = useState<ProfileForm>(initialForm);
+  const navigate = useNavigate();
+  const [form, setForm] = useState<ProfileForm>(() => {
+    try {
+      const saved = localStorage.getItem('kurio-profile-demo');
+      return saved ? { ...initialForm, ...JSON.parse(saved) } : initialForm;
+    } catch { return initialForm; }
+  });
   const [avatar, setAvatar] = useState<string | null>(null);
   const [showPasswords, setShowPasswords] = useState(false);
   const [message, setMessage] = useState('');
@@ -95,7 +102,10 @@ export default function CollectorProfile() {
       return;
     }
 
-    setMessage('Dados validados! A persistência será integrada depois.');
+    const { currentPassword: _current, newPassword: _new, confirmPassword: _confirm, ...publicFields } = form;
+    void [_current, _new, _confirm];
+    localStorage.setItem('kurio-profile-demo', JSON.stringify(publicFields));
+    setMessage('Perfil demonstrativo salvo neste navegador.');
   }
 
   return (
@@ -111,9 +121,9 @@ export default function CollectorProfile() {
                 key={label}
                 className={`collector-menu-item ${index === 0 ? 'active' : ''}`}
                 onClick={() => {
-                  if (index !== 0) {
-                    setMessage(`A seção "${label}" será conectada depois.`);
-                  }
+                  if (label === 'Carteiras') navigate({ to: '/carteiras' });
+                  else if (label === 'Sair') navigate({ to: '/' });
+                  else if (index !== 0) setMessage(`A seção "${label}" será conectada depois.`);
                 }}
               >
                 <Icon size={17} strokeWidth={1.6} />

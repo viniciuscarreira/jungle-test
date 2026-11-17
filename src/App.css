@@ -1068,3 +1068,14 @@
 .login-button:hover {
   background: #e9a45f;
 }
+
+/* Interações do marketplace */
+.header {position:relative}
+.kurio-search {position:absolute;right:16px;top:100%;z-index:20;background:#281811;border:1px solid #8c5736;border-radius:8px;padding:12px;display:flex;gap:8px;box-shadow:0 8px 30px #0008}
+.kurio-search input {min-width:240px;background:#140c09;color:#fff;border:1px solid #a76a43;border-radius:4px;padding:10px}
+.kurio-search button,.kurio-clear {background:#dc944a;color:#1c0f09;border:0;border-radius:4px;padding:8px;cursor:pointer}
+.category-list li button {width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:0;color:inherit;font:inherit;text-align:left;padding:0;cursor:pointer}
+.category-list li button:hover,.category-list li button.kurio-active-filter {color:#e99b54;font-weight:bold}
+.hero-dots {display:flex;gap:8px}
+.hero-dots button {width:8px;height:8px;border-radius:50%;border:1px solid #e99b54;background:transparent;padding:0;cursor:pointer}
+.hero-dots button.active {background:#e99b54}

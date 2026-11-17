@@ -4,8 +4,11 @@ import { Heart, Minus, Plus, Star, ZoomIn } from 'lucide-react';
 import NFTCard from '../components/NFTCard';
 import Footer from '../components/Footer';
 import './NFTDetails.css';
+import { useNavigate, useParams } from '@tanstack/react-router';
+import { getNFT, nfts } from '../data/nfts';
+import { useCart } from '../state/CartContext';
 
-const images = [
+const galleryImages = [
   '/images/monkey-green.png',
   '/images/monkey-purple.png',
   '/images/monkey-gold.png',
@@ -13,11 +16,17 @@ const images = [
 ];
 
 export default function NFTDetails() {
+  const navigate = useNavigate();
+  const { id } = useParams({ from: "/nft/$id" });
+  const nft = getNFT(id);
+  const { addItem } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [favorite, setFavorite] = useState(false);
   const [activeTab, setActiveTab] = useState<'details' | 'reviews'>('details');
+  const [relatedPage, setRelatedPage] = useState(0);
 
+  if (!nft) return <div className="details-page" style={{padding: 48}}><h1>NFT não encontrado</h1><button onClick={() => navigate({to:"/"})}>Voltar ao mercado</button></div>;
   return (
     <div className="details-page">
       <main className="details-container">
@@ -26,7 +35,7 @@ export default function NFTDetails() {
         <section className="details-product">
           <div className="details-gallery">
             <div className="details-thumbnails">
-              {images.map((image, index) => (
+              {[nft.image, ...galleryImages.filter(image => image !== nft.image)].map((image, index) => (
                 <button
                   key={index}
                   className={`details-thumbnail ${selectedImage === index ? 'active' : ''}`}
@@ -38,14 +47,14 @@ export default function NFTDetails() {
             </div>
 
             <div className="details-main-image">
-              <img src={images[selectedImage]} alt="Emerald Ape #042" />
+              <img src={[nft.image, ...galleryImages.filter(image => image !== nft.image)][selectedImage % (1 + galleryImages.filter(image => image !== nft.image).length)]} alt={nft.name} />
               <ZoomIn className="details-zoom" size={20} />
             </div>
           </div>
 
           <div className="details-info">
-            <h1>Emerald Ape #042</h1>
-            <strong className="details-price">1.19 ETH</strong>
+            <h1>{nft.name}</h1>
+            <strong className="details-price">{nft.price} ETH</strong>
 
             <div className="details-rating">
               <span>★★★★★</span>
@@ -61,7 +70,7 @@ export default function NFTDetails() {
 
             <p className="details-edition">
               Edição:<br />
-              042 / 1000 <span className="details-verified">VERIFICADO</span>
+              {nft.name.match(/#(\d+)/)?.[1]} / 1000 <span className="details-verified">VERIFICADO</span>
             </p>
 
             <div className="details-actions">
@@ -75,7 +84,7 @@ export default function NFTDetails() {
                 </button>
               </div>
 
-              <button className="details-buy">COMPRAR</button>
+              <button className="details-buy" onClick={() => { addItem({ id: nft.id, name: nft.name, token: nft.name.match(/#\d+/)?.[0] ?? String(nft.id), price: Number(nft.price), quantity, image: nft.image }); navigate({ to: "/carrinho" }); }}>COMPRAR</button>
 
               <button
                 className={`details-favorite ${favorite ? 'selected' : ''}`}
@@ -87,9 +96,9 @@ export default function NFTDetails() {
             </div>
 
             <div className="details-metadata">
-              <p>ID do token: #042</p>
-              <p>Coleção: Kurio Apes</p>
-              <p>Atributos: Óculos, Esmeralda, Raro</p>
+              <p>ID do token: {nft.name.match(/#\d+/)?.[0]}</p>
+              <p>Coleção: {nft.category}</p>
+              <p>Rede: {nft.network} · Criador: {nft.creator}</p>
             </div>
 
             <p className="details-share">Compartilhar este NFT: ◉ ◇ ♥</p>
@@ -115,7 +124,7 @@ export default function NFTDetails() {
           {activeTab === 'details' ? (
             <div className="details-description-content">
               <p>
-                Emerald Ape #042 é uma obra digital 1/1 finalizada à mão da
+                {nft.name} é uma obra digital 1/1 finalizada à mão da
                 coleção Kurio Editions. Cada atributo fica armazenado nos
                 metadados do token e é verificado na Ethereum.
               </p>
@@ -142,13 +151,9 @@ export default function NFTDetails() {
         <section className="details-related">
           <h2>Mais desta coleção</h2>
           <div className="details-related-grid">
-            <NFTCard name="Cosmic Bloom #118" price="1.29" image="/images/monkey-purple.png" />
-            <NFTCard name="Violet Nomad #314" price="1.39" image="/images/monkey-purple.png" />
-            <NFTCard name="Ivory Baron #918" price="1.79" image="/images/monkey-gold.png" />
-            <NFTCard name="Golden Bear #207" price="0.99" image="/images/monkey-gold.png" />
-            <NFTCard name="Golden Signal #160" price="0.99" image="/images/monkey-gold.png" />
+            {nfts.filter(item => item.id !== nft.id).slice(relatedPage*5,relatedPage*5+5).map(item => <NFTCard key={item.id} {...item} />)}
           </div>
-          <div className="details-dots">● ○ ○</div>
+          <div className="details-dots">{[0,1,2].map(index => <button key={index} type="button" aria-label={`Mais desta coleção ${index+1}`} onClick={() => setRelatedPage(index)} style={{background:"transparent",border:0,color:relatedPage===index?"#e99b54":"#f5e6d6",cursor:"pointer",fontSize:20}}>{relatedPage===index?"●":"○"}</button>)}</div>
         </section>
       </main>
 
