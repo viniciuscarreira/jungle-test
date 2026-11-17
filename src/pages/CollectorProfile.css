@@ -1,0 +1,242 @@
+
+.collector-page {
+  min-height: 100vh;
+  background: #130c09;
+  color: #f5e6d6;
+  padding: 35px 0 100px;
+}
+
+.collector-layout {
+  width: min(1180px, 92%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 26px;
+  align-items: start;
+}
+
+.collector-sidebar {
+  background: #251710;
+  padding: 16px 0 12px;
+}
+
+.collector-sidebar h2 {
+  font-size: 15px;
+  margin: 0 14px 12px;
+}
+
+.collector-sidebar nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.collector-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  padding: 12px 14px;
+  background: transparent;
+  border: none;
+  border-left: 3px solid transparent;
+  color: #e99b54;
+  text-align: left;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.collector-menu-item.active {
+  background: #301e15;
+  border-left-color: #e99b54;
+}
+
+.collector-menu-item:hover {
+  background: #301e15;
+}
+
+.collector-content h1 {
+  font-size: 16px;
+  font-weight: normal;
+  margin: 0 0 25px;
+}
+
+.collector-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px 26px;
+}
+
+.collector-fields label,
+.collector-password-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.collector-fields label span {
+  color: #e99b54;
+}
+
+.collector-fields input,
+.collector-ens select,
+.collector-password-input input {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #3c251a;
+  background: #1b100c;
+  color: #f5e6d6;
+  font: inherit;
+  outline: none;
+}
+
+.collector-fields input:focus,
+.collector-password-input input:focus {
+  border-color: #e99b54;
+}
+
+.collector-ens {
+  display: flex;
+  gap: 10px;
+}
+
+.collector-ens select {
+  width: 95px;
+}
+
+.collector-ens select option {
+  background: #1b100c;
+}
+
+.collector-avatar-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.collector-avatar-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.collector-avatar-preview {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #301e15;
+  color: #e99b54;
+  overflow: hidden;
+}
+
+.collector-avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.collector-avatar-change {
+  padding: 12px 20px;
+  background: #e99b54;
+  border: 0;
+  color: #211209;
+  font: inherit;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.collector-avatar-remove {
+  border: 0;
+  background: transparent;
+  color: #f5e6d6;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.collector-password-heading {
+  margin: 30px 0 20px;
+  font-size: 15px;
+  font-weight: normal;
+}
+
+.collector-password-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 360px;
+}
+
+.collector-password-input {
+  position: relative;
+}
+
+.collector-password-input input {
+  padding-right: 45px;
+}
+
+.collector-password-input button {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background: none;
+  border: 0;
+  color: #e99b54;
+  cursor: pointer;
+}
+
+.collector-save {
+  margin-top: 25px;
+  padding: 13px 35px;
+  background: #e99b54;
+  border: 0;
+  border-radius: 3px;
+  color: #211209;
+  font: inherit;
+  font-weight: bold;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.collector-message {
+  color: #e99b54;
+  font-size: 12px;
+  margin-top: 15px;
+}
+
+@media (max-width: 850px) {
+  .collector-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .collector-sidebar nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 550px) {
+  .collector-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .collector-sidebar nav {
+    grid-template-columns: 1fr;
+  }
+}
+
+.collector-fields label {
+  display: block;
+}
+
+.collector-fields label > input,
+.collector-fields label > .collector-ens {
+  margin-top: 10px;
+}

@@ -15,6 +15,8 @@ import OrderConfirmation from './pages/OrderConfirmation';
 import { useState } from 'react';
 import LoginModal from './components/LoginModal';
 
+import CollectorProfile from './pages/CollectorProfile';
+
 
 const nfts = [
   { id: 1, name: 'Emerald Ape #042', price: '1.19', image: '/images/monkey-green.png' },
@@ -68,11 +70,13 @@ const articles = [
 function App() {
   const [loginOpen, setLoginOpen] = useState(false);
 
+  const mostrarPerfil = true;
   const mostrarConfirmacao = false;
   const mostrarPagamento = false;
   const mostrarCarrinho = false;
   const mostrarDetalhes = false;
 
+  if (mostrarPerfil) return <CollectorProfile />;
   if (mostrarConfirmacao) return <OrderConfirmation />;
   if (mostrarPagamento) return <Payment />;
   if (mostrarCarrinho) return <Cart />;
