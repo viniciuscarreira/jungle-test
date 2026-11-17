@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import { useAuth } from '../state/AuthContext';
 import {
   UserRound,
   Wallet,
@@ -54,6 +55,7 @@ const menuItems = [
 
 export default function Wallets() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [form, setForm] = useState<WalletForm>(() => {
     try {
       const saved = localStorage.getItem('kurio-wallets-demo');
@@ -88,7 +90,8 @@ export default function Wallets() {
                 className={`wallets-menu-item ${index === 1 ? 'active' : ''}`}
                 onClick={() => {
                   if (label === 'Dados do perfil') navigate({ to: '/perfil' });
-                  else if (label === 'Sair') navigate({ to: '/' });
+                  else if (label === 'Lista de interesse') { sessionStorage.setItem('kurio-profile-section', 'favorites'); navigate({ to: '/perfil' }); }
+                  else if (label === 'Sair') { logout(); navigate({ to: '/' }); }
                   else if (index !== 1) setMessage(`A seção "${label}" será conectada depois.`);
                 }}
               >

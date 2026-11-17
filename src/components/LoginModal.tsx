@@ -2,12 +2,15 @@
 import { useState } from 'react';
 import { Eye, EyeOff, X } from 'lucide-react';
 import './LoginModal.css';
+import { useAuth } from '../state/AuthContext';
 
 type LoginModalProps = {
   onClose: () => void;
 };
 
 export default function LoginModal({ onClose }: LoginModalProps) {
+  const { register, login } = useAuth();
+  const [busy, setBusy] = useState(false);
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -23,24 +26,23 @@ export default function LoginModal({ onClose }: LoginModalProps) {
     setMessage('');
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
+    setMessage('');
     if (isRegister && password !== confirmPassword) {
       setMessage('As senhas não coincidem.');
       return;
     }
-
-    if (isRegister && password.length < 6) {
-      setMessage('A senha deve ter pelo menos 6 caracteres.');
-      return;
+    setBusy(true);
+    try {
+      if (isRegister) await register(username, email, password);
+      else await login(email, password);
+      onClose();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Não foi possível continuar.');
+    } finally {
+      setBusy(false);
     }
-
-    setMessage(
-      isRegister
-        ? 'Cadastro validado! A criação da conta será integrada depois.'
-        : 'Login validado! A autenticação será integrada depois.'
-    );
   }
 
   return (
@@ -147,15 +149,15 @@ export default function LoginModal({ onClose }: LoginModalProps) {
               type="button"
               className="login-forgot"
               onClick={() =>
-                setMessage('Recuperação de senha será implementada depois.')
+                setMessage('Recuperação de senha não está disponível nesta demonstração.')
               }
             >
               Esqueceu a senha?
             </button>
           )}
 
-          <button className="login-submit" type="submit">
-            {isRegister ? 'Criar conta' : 'Entrar'}
+          <button className="login-submit" type="submit" disabled={busy}>
+            {busy ? 'Aguarde...' : isRegister ? 'Criar conta' : 'Entrar'}
           </button>
 
           {message && (
@@ -165,14 +167,14 @@ export default function LoginModal({ onClose }: LoginModalProps) {
           )}
         </form>
 
-        <div className="login-divider">Ou continue com</div>
+        <div className="login-divider">Login social indisponível na demonstração</div>
 
-        <button className="login-social" type="button">
+        <button className="login-social" type="button" disabled title="Integração social não disponível">
           <span className="login-google">G</span>
           Continuar com Google
         </button>
 
-        <button className="login-social" type="button">
+        <button className="login-social" type="button" disabled title="Integração social não disponível">
           <span className="login-facebook">f</span>
           Continuar com Facebook
         </button>

@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -18,6 +19,25 @@ import Wallets from './pages/Wallets';
 
 import './index.css';
 import { CartProvider } from './state/CartContext';
+import { FavoritesProvider } from './state/FavoritesContext';
+import { AuthProvider, useAuth } from './state/AuthContext';
+import { useEffect, type ReactNode } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+
+function PrivatePage({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!user) {
+      sessionStorage.setItem('kurio-login-required', '1');
+      void navigate({ to: '/' });
+    }
+  }, [user, navigate]);
+  if (!user) return <p style={{ padding: 32 }}>Faça login para acessar esta página. Redirecionando...</p>;
+  return <>{children}</>;
+}
+const ProtectedProfile = () => <PrivatePage><CollectorProfile /></PrivatePage>;
+const ProtectedWallets = () => <PrivatePage><Wallets /></PrivatePage>;
 
 const rootRoute = createRootRoute();
 
@@ -54,13 +74,13 @@ const confirmationRoute = createRoute({
 const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/perfil',
-  component: CollectorProfile,
+  component: ProtectedProfile,
 });
 
 const walletsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/carteiras',
-  component: Wallets,
+  component: ProtectedWallets,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -90,8 +110,25 @@ if (!rootElement) {
   throw new Error('Elemento root não encontrado!');
 }
 
-ReactDOM.createRoot(rootElement).render(
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30_000 } } });
+
+function renderApp() {
+ReactDOM.createRoot(rootElement!).render(
   <React.StrictMode>
-    <CartProvider><RouterProvider router={router} /></CartProvider>
+    <QueryClientProvider client={queryClient}><AuthProvider><FavoritesProvider><CartProvider><RouterProvider router={router} /></CartProvider></FavoritesProvider></AuthProvider></QueryClientProvider>
   </React.StrictMode>
 );
+
+}
+// Start the mock API before React mounts so the first catalog request is intercepted.
+// The worker is generated with: npx msw init public --save
+async function bootstrap() {
+  try {
+    const { worker } = await import('./mocks/browser');
+    await worker.start({ onUnhandledRequest: 'bypass', quiet: true });
+  } catch (error) {
+    console.error('Não foi possível iniciar a API simulada:', error);
+  }
+  renderApp();
+}
+void bootstrap();

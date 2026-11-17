@@ -1,4 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
+import { Heart } from 'lucide-react';
+import { useFavorites } from '../state/FavoritesContext';
+import { useAuth } from '../state/AuthContext';
 
 interface NFTCardProps {
   id?: number;
@@ -16,6 +19,10 @@ function NFTCard({
   oldPrice
 }: NFTCardProps) {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const nftId = id ?? 1;
+  const favorite = isFavorite(nftId);
   return (
     <article
       className="nft-card"
@@ -29,6 +36,16 @@ function NFTCard({
       }}
       style={{ cursor: 'pointer' }}
     >
+      <button type="button" className={`nft-card-favorite ${favorite ? 'selected' : ''}`}
+        aria-label={favorite ? `Remover ${name} dos favoritos` : `Favoritar ${name}`}
+        aria-pressed={favorite}
+        onClick={event => {
+          event.stopPropagation();
+          if (!user) { sessionStorage.setItem('kurio-login-required', '1'); navigate({ to: '/' }); return; }
+          toggleFavorite(nftId);
+        }}>
+        <Heart size={17} fill={favorite ? 'currentColor' : 'none'} />
+      </button>
       <img
         src={image}
         alt={name}

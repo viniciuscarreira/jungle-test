@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
+import { fetchCatalog } from './api/client';
 
 import './App.css';
 import { Search, ShoppingCart, LogIn } from 'lucide-react';
@@ -10,6 +12,7 @@ import Footer from './components/Footer';
 
 import { useMemo, useState } from 'react';
 import LoginModal from './components/LoginModal';
+import { useAuth } from './state/AuthContext';
 
 
 import { useNavigate } from '@tanstack/react-router';
@@ -55,7 +58,9 @@ const articles = [
 
 
 function App() {
-  const [loginOpen, setLoginOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(() => sessionStorage.getItem('kurio-login-required') === '1');
+  const { user, logout } = useAuth();
+  if (sessionStorage.getItem('kurio-login-required') === '1') sessionStorage.removeItem('kurio-login-required');
   const navigate = useNavigate();
   const { items } = useCart();
   const [searchOpen, setSearchOpen] = useState(false);
@@ -72,12 +77,15 @@ function App() {
     {title: 'DESCUBRA NOVOS', second: 'CRIADORES DIGITAIS', image:'/images/monkey-purple.png', label:'Coleções exclusivas'},
     {title: 'COLECIONE ARTE', second: 'QUE FAZ HISTÓRIA', image:'/images/monkey-gold.png', label:'Explore o mercado'},
   ];
+  const catalogFilters = { search, category, network, maxPrice: appliedPrice, sort: tab === 'Novos lançamentos' ? 'new' : tab === 'Em alta' ? 'popular' : 'all' };
+  const catalogQuery = useQuery({ queryKey: ['catalog', catalogFilters], queryFn: () => fetchCatalog(catalogFilters) });
+  // Keep the demo browsable if the local mock worker was not initialized yet.
   const visibleNFTs = useMemo(() => {
-    const filtered = nfts.filter(nft => (!search || nft.name.toLowerCase().includes(search.toLowerCase()) || nft.creator.toLowerCase().includes(search.toLowerCase())) && (!category || nft.category === category) && (!network || nft.network === network) && Number(nft.price) <= appliedPrice);
-    if (tab === 'Novos lançamentos') return [...filtered].sort((a,b) => b.created-a.created);
-    if (tab === 'Em alta') return [...filtered].sort((a,b) => b.popularity-a.popularity);
-    return filtered;
-  }, [search,category,network,appliedPrice,tab]);
+    const filtered = nfts.filter(nft => (!search || `${nft.name} ${nft.creator}`.toLowerCase().includes(search.toLowerCase())) && (!category || nft.category === category) && (!network || nft.network === network) && Number(nft.price) <= appliedPrice);
+    if (tab === 'Novos lançamentos') filtered.sort((a,b) => b.created-a.created);
+    if (tab === 'Em alta') filtered.sort((a,b) => b.popularity-a.popularity);
+    return catalogQuery.data ?? filtered;
+  }, [catalogQuery.data, search, category, network, appliedPrice, tab]);
   const pageCount = Math.max(1, Math.ceil(visibleNFTs.length/9));
   const currentPage = Math.min(page,pageCount);
   const pageNFTs = visibleNFTs.slice((currentPage-1)*9,currentPage*9);
@@ -124,12 +132,13 @@ function App() {
           <button
             className="login-button"
             type="button"
-            onClick={() => setLoginOpen(true)}
+            onClick={() => user ? navigate({ to: '/perfil' }) : setLoginOpen(true)}
           >
             <LogIn size={19} strokeWidth={1.8} />
-            <span>Entrar</span>
+            <span>{user ? user.name : 'Entrar'}</span>
           </button>
         </div>
+        {user && <button type="button" className="kurio-logout" onClick={logout}>Sair</button>}
         {searchOpen && <div className="kurio-search"><input autoFocus aria-label="Pesquisar NFTs" placeholder="Pesquisar NFT ou criador..." value={search} onChange={e => {setSearch(e.target.value);setPage(1);}} /><button type="button" onClick={() => {setSearch('');setSearchOpen(false);setPage(1);}}>Limpar ✕</button></div>}
       </header>
 
@@ -212,6 +221,8 @@ function App() {
               <span>Ordenar por: Listados recentemente</span>
             </div>
 
+            {catalogQuery.isPending && <p role="status">Carregando catálogo...</p>}
+            {catalogQuery.isError && <p role="alert">API simulada indisponível. Exibindo catálogo local. <button type="button" onClick={() => void catalogQuery.refetch()}>Tentar novamente</button></p>}
             <div className="nft-grid">
               {pageNFTs.map((nft) => (
                 <NFTCard key={nft.id} {...nft} />

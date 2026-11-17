@@ -1,11 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 export type CartItem = { id: number; name: string; token: string; price: number; quantity: number; image: string };
 export type Order = { id: string; date: string; items: CartItem[]; subtotal: number; discount: number; networkFee: number; total: number; provider: string };
-const starter: CartItem[] = [
- { id: 1, name: 'Emerald Ape #042', token: '#042', price: 1.19, quantity: 2, image: '/images/monkey-green.png' },
- { id: 5, name: 'Violet Nomad #314', token: '#314', price: 1.39, quantity: 6, image: '/images/monkey-purple.png' },
- { id: 6, name: 'Ivory Baron #088', token: '#088', price: 1.79, quantity: 9, image: '/images/monkey-gold.png' },
-];
+const starter: CartItem[] = [];
 function load<T>(key: string, fallback: T): T { try { const value = localStorage.getItem(key); return value ? JSON.parse(value) as T : fallback; } catch { return fallback; } }
 type CartState = { items: CartItem[]; couponApplied: boolean; subtotal: number; discount: number; networkFee: number; total: number; order: Order | null; addItem: (item: CartItem) => void; updateQuantity: (id: number, amount: number) => void; removeItem: (id: number) => void; applyCoupon: (code: string) => boolean; checkout: (provider: string) => Order | null };
 const Context = createContext<CartState | null>(null);

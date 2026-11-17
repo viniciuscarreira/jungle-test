@@ -1,6 +1,10 @@
 
 import { useRef, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import { useAuth } from '../state/AuthContext';
+import { useFavorites } from '../state/FavoritesContext';
+import { nfts } from '../data/nfts';
+import NFTCard from '../components/NFTCard';
 import {
   UserRound,
   Wallet,
@@ -53,10 +57,13 @@ const menuItems = [
 
 export default function CollectorProfile() {
   const navigate = useNavigate();
+  const { user, logout, changePassword } = useAuth();
+  const { favorites } = useFavorites();
+  const [section, setSection] = useState<'profile' | 'favorites'>(() => { const target = sessionStorage.getItem('kurio-profile-section'); sessionStorage.removeItem('kurio-profile-section'); return target === 'favorites' ? 'favorites' : 'profile'; });
   const [form, setForm] = useState<ProfileForm>(() => {
     try {
       const saved = localStorage.getItem('kurio-profile-demo');
-      return saved ? { ...initialForm, ...JSON.parse(saved) } : initialForm;
+      return { ...initialForm, ...(saved ? JSON.parse(saved) : {}), displayName: user?.name || '', email: user?.email || '' };
     } catch { return initialForm; }
   });
   const [avatar, setAvatar] = useState<string | null>(null);
@@ -89,7 +96,7 @@ export default function CollectorProfile() {
     reader.readAsDataURL(file);
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (form.newPassword && form.newPassword !== form.confirmPassword) {
@@ -102,10 +109,19 @@ export default function CollectorProfile() {
       return;
     }
 
+    if (form.currentPassword || form.newPassword || form.confirmPassword) {
+      if (!form.currentPassword || !form.newPassword || !form.confirmPassword) {
+        setMessage('Preencha os três campos de senha para alterá-la.');
+        return;
+      }
+      try { await changePassword(form.currentPassword, form.newPassword); }
+      catch (error) { setMessage(error instanceof Error ? error.message : 'Não foi possível alterar a senha.'); return; }
+    }
     const { currentPassword: _current, newPassword: _new, confirmPassword: _confirm, ...publicFields } = form;
     void [_current, _new, _confirm];
     localStorage.setItem('kurio-profile-demo', JSON.stringify(publicFields));
-    setMessage('Perfil demonstrativo salvo neste navegador.');
+    setForm(current => ({ ...current, currentPassword: '', newPassword: '', confirmPassword: '' }));
+    setMessage(form.newPassword ? 'Perfil salvo e senha alterada com sucesso.' : 'Perfil demonstrativo salvo neste navegador.');
   }
 
   return (
@@ -119,11 +135,13 @@ export default function CollectorProfile() {
               <button
                 type="button"
                 key={label}
-                className={`collector-menu-item ${index === 0 ? 'active' : ''}`}
+                className={`collector-menu-item ${(section === 'profile' && index === 0) || (section === 'favorites' && label === 'Lista de interesse') ? 'active' : ''}`}
                 onClick={() => {
                   if (label === 'Carteiras') navigate({ to: '/carteiras' });
-                  else if (label === 'Sair') navigate({ to: '/' });
-                  else if (index !== 0) setMessage(`A seção "${label}" será conectada depois.`);
+                  else if (label === 'Sair') { logout(); navigate({ to: '/' }); }
+                  else if (label === 'Lista de interesse') { setSection('favorites'); setMessage(''); }
+                  else if (index === 0) { setSection('profile'); setMessage(''); }
+                  else setMessage(`A seção "${label}" será conectada depois.`);
                 }}
               >
                 <Icon size={17} strokeWidth={1.6} />
@@ -134,6 +152,18 @@ export default function CollectorProfile() {
         </aside>
 
         <main className="collector-content">
+          {section === 'favorites' ? (
+            <section aria-label="Lista de interesse">
+              <h1>Lista de interesse</h1>
+              <p>Seus NFTs favoritos ficam salvos nesta conta neste navegador.</p>
+              {favorites.length === 0 ? <p>Você ainda não favoritou nenhum NFT. Explore o mercado para começar.</p> : (
+                <div className="nft-grid kurio-favorites-grid">
+                  {nfts.filter(nft => favorites.includes(nft.id)).map(nft => <NFTCard key={nft.id} {...nft} />)}
+                </div>
+              )}
+              <button type="button" className="collector-save" onClick={() => navigate({ to: '/' })}>Explorar NFTs</button>
+            </section>
+          ) : <>
           <h1>Perfil do colecionador</h1>
 
           <form onSubmit={handleSubmit}>
@@ -324,6 +354,7 @@ export default function CollectorProfile() {
               </p>
             )}
           </form>
+          </>}
         </main>
       </div>
     </div>

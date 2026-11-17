@@ -7,6 +7,8 @@ import './NFTDetails.css';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { getNFT, nfts } from '../data/nfts';
 import { useCart } from '../state/CartContext';
+import { useFavorites } from '../state/FavoritesContext';
+import { useAuth } from '../state/AuthContext';
 
 const galleryImages = [
   '/images/monkey-green.png',
@@ -22,7 +24,9 @@ export default function NFTDetails() {
   const { addItem } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [favorite, setFavorite] = useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const { user } = useAuth();
+  const favorite = nft ? isFavorite(nft.id) : false;
   const [activeTab, setActiveTab] = useState<'details' | 'reviews'>('details');
   const [relatedPage, setRelatedPage] = useState(0);
 
@@ -88,7 +92,14 @@ export default function NFTDetails() {
 
               <button
                 className={`details-favorite ${favorite ? 'selected' : ''}`}
-                onClick={() => setFavorite(!favorite)}
+                onClick={() => {
+                  if (!user) {
+                    sessionStorage.setItem('kurio-login-required', '1');
+                    navigate({ to: '/' });
+                    return;
+                  }
+                  toggleFavorite(nft.id);
+                }}
               >
                 <Heart size={15} fill={favorite ? 'currentColor' : 'none'} />
                 {favorite ? 'Favoritado' : 'Favoritar'}

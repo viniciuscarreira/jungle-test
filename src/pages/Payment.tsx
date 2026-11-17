@@ -134,9 +134,8 @@ export default function Payment() {
               </label>
 
               <label>
-                Código de indicação *
+                Código de indicação (opcional)
                 <input
-                  required
                   value={form.discountCode}
                   onChange={(e) => updateField('discountCode', e.target.value)}
                 />
@@ -218,9 +217,9 @@ export default function Payment() {
 
             <div className="payment-wallet-options">
               {[
-                { id: 'metamask', label: 'METAMASK · WALLETCONNECT · COINBASE' },
-                { id: 'walletconnect', label: 'MetaMask' },
-                { id: 'coinbase', label: 'Coinbase Wallet' },
+                { id: 'metamask', label: 'MetaMask (simulado)' },
+                { id: 'walletconnect', label: 'WalletConnect (simulado)' },
+                { id: 'coinbase', label: 'Coinbase Wallet (simulado)' },
               ].map((provider) => (
                 <label
                   className={`payment-wallet-option ${
@@ -246,8 +245,7 @@ export default function Payment() {
 
             {submitted && (
               <p className="payment-success">
-                Formulário validado! A confirmação de compra será integrada
-                na próxima etapa.
+                Não foi possível criar o pedido demonstrativo. Verifique o carrinho.
               </p>
             )}
           </aside>
