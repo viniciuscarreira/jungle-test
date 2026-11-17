@@ -6,7 +6,9 @@ import { Search, ShoppingCart, LogIn } from 'lucide-react';
 import NFTCard from './components/NFTCard';
 import BlogCard from './components/BlogCard';
 import Footer from './components/Footer';
+
 import NFTDetails from './pages/NFTDetails';
+import Cart from './pages/Cart';
 
 const nfts = [
   { id: 1, name: 'Emerald Ape #042', price: '1.19', image: '/images/monkey-green.png' },
@@ -58,7 +60,16 @@ const articles = [
 
 
 function App() {
-  return <NFTDetails />;
+  const mostrarCarrinho = true;
+  const mostrarDetalhes = false;
+
+  if (mostrarCarrinho) {
+    return <Cart />;
+  }
+
+  if (mostrarDetalhes) {
+    return <NFTDetails />;
+  }
 
   return (
     <div className="app">
