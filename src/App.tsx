@@ -6,6 +6,7 @@ import { Search, ShoppingCart, LogIn } from 'lucide-react';
 import NFTCard from './components/NFTCard';
 import BlogCard from './components/BlogCard';
 import Footer from './components/Footer';
+import NFTDetails from './pages/NFTDetails';
 
 const nfts = [
   { id: 1, name: 'Emerald Ape #042', price: '1.19', image: '/images/monkey-green.png' },
@@ -57,6 +58,8 @@ const articles = [
 
 
 function App() {
+  return <NFTDetails />;
+
   return (
     <div className="app">
       <header className="header">
