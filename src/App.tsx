@@ -12,6 +12,10 @@ import Cart from './pages/Cart';
 import Payment from './pages/Payment';
 import OrderConfirmation from './pages/OrderConfirmation';
 
+import { useState } from 'react';
+import LoginModal from './components/LoginModal';
+
+
 const nfts = [
   { id: 1, name: 'Emerald Ape #042', price: '1.19', image: '/images/monkey-green.png' },
   { id: 2, name: 'Sage Nomad #009', price: '1.69', image: '/images/monkey-purple.png' },
@@ -62,26 +66,17 @@ const articles = [
 
 
 function App() {
-  const mostrarConfirmacao = true;
+  const [loginOpen, setLoginOpen] = useState(false);
+
+  const mostrarConfirmacao = false;
   const mostrarPagamento = false;
   const mostrarCarrinho = false;
   const mostrarDetalhes = false;
 
-  if (mostrarConfirmacao) {
-    return <OrderConfirmation />;
-  }
-
-  if (mostrarPagamento) {
-    return <Payment />;
-  }
-
-  if (mostrarCarrinho) {
-    return <Cart />;
-  }
-
-  if (mostrarDetalhes) {
-    return <NFTDetails />;
-  }
+  if (mostrarConfirmacao) return <OrderConfirmation />;
+  if (mostrarPagamento) return <Payment />;
+  if (mostrarCarrinho) return <Cart />;
+  if (mostrarDetalhes) return <NFTDetails />;
 
   return (
     <div className="app">
@@ -117,7 +112,11 @@ function App() {
             <span className="cart-count">6</span>
           </button>
 
-          <button className="login-button" type="button">
+          <button
+            className="login-button"
+            type="button"
+            onClick={() => setLoginOpen(true)}
+          >
             <LogIn size={19} strokeWidth={1.8} />
             <span>Entrar</span>
           </button>
@@ -303,6 +302,10 @@ function App() {
 
       </main>
       <Footer />
+
+      {loginOpen && (
+        <LoginModal onClose={() => setLoginOpen(false)} />
+      )}
     </div>
   );
 }
