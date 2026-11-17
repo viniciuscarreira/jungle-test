@@ -155,3 +155,36 @@
     padding: 35px 22px;
   }
 }
+
+
+/* Abas Entrar e Criar conta */
+.login-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.login-tabs button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: #f5e6d6;
+  font: inherit;
+  cursor: pointer;
+}
+
+.login-tabs button.active {
+  color: #e99b54;
+}
+
+.login-tabs span {
+  color: #f5e6d6;
+}
+
+.login-feedback {
+  margin: 4px 0 0;
+  color: #e99b54;
+  font-size: 11px;
+  line-height: 1.6;
+}
