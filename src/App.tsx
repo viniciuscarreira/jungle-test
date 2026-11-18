@@ -6,6 +6,7 @@ import { Search, ShoppingCart, LogIn } from 'lucide-react';
 
 
 import NFTCard from './components/NFTCard';
+import RealtimeStatus from './components/RealtimeStatus';
 import BlogCard from './components/BlogCard';
 import Footer from './components/Footer';
 
@@ -143,6 +144,7 @@ function App() {
       </header>
 
       <main id="inicio">
+        <div style={{maxWidth:1200,margin:"0 auto",padding:"0 20px"}}><RealtimeStatus /></div>
         <section className="hero">
           <div className="hero-content">
             <span className="hero-label">

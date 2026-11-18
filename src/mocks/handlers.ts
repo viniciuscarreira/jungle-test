@@ -1,6 +1,33 @@
 import { http, HttpResponse, delay } from 'msw';
 import { nfts, getNFT } from '../data/nfts';
+const demoUsers = new Map<string, { name: string; email: string }>();
+const demoOrders: Array<{ id: string; email: string; items: unknown[]; status: string }> = [];
 export const handlers = [
+  http.get('/api/health', () => HttpResponse.json({ status: 'ok', service: 'kurio-msw' })),
+  http.post('/api/auth/register', async ({ request }) => {
+    const body = await request.json() as { name?: string; email?: string };
+    if (!body.email || !body.name) return HttpResponse.json({ message: 'Nome e e-mail obrigatórios' }, { status: 400 });
+    const user = { name: body.name, email: body.email.toLowerCase() };
+    demoUsers.set(user.email, user);
+    return HttpResponse.json({ user, token: 'demo-token-not-for-production' }, { status: 201 });
+  }),
+  http.post('/api/auth/login', async ({ request }) => {
+    const body = await request.json() as { email?: string };
+    const user = demoUsers.get((body.email || '').toLowerCase());
+    if (!user) return HttpResponse.json({ message: 'Usuário de demonstração não encontrado' }, { status: 401 });
+    return HttpResponse.json({ user, token: 'demo-token-not-for-production' });
+  }),
+  http.post('/api/orders', async ({ request }) => {
+    const body = await request.json() as { email?: string; items?: unknown[] };
+    if (!body.email || !Array.isArray(body.items) || !body.items.length) return HttpResponse.json({ message: 'Pedido inválido' }, { status: 400 });
+    const order = { id: `demo-${Date.now()}`, email: body.email, items: body.items, status: 'simulated' };
+    demoOrders.push(order);
+    return HttpResponse.json(order, { status: 201 });
+  }),
+  http.get('/api/orders', ({ request }) => {
+    const email = new URL(request.url).searchParams.get('email');
+    return HttpResponse.json({ items: demoOrders.filter(order => order.email === email) });
+  }),
   http.get('/api/nfts', async ({ request }) => {
     await delay(180);
     const params = new URL(request.url).searchParams;
